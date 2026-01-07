@@ -1,17 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { ComponentContext, getStudioProApi } from "@mendix/extensions-api";
+import styles from "../index.module.css";
+import CreateMicroflow from "./createmicroflow";
 
 interface ListProps {
     context: ComponentContext;
+    apiData: unknown;
+}
+
+interface RequiredField {
+    name: string;
+    type: string;
 }
 
 interface ListItem {
     id: string;
-    label: string;
+    name: string;
+    description: string;
+    requiredFields: RequiredField[];
+}
+
+interface PipelineParameter {
+    type: string;
+    properties: Record<string, unknown>;
+    required?: string[];
+    additionalProperties?: boolean;
+    $defs?: Record<string, unknown>;
+}
+
+interface Pipeline {
+    name: string;
+    description: string;
+    parameters: PipelineParameter;
 }
 
 interface PipelinesResponse {
-    pipelines: string[];
+    pipelines: Pipeline[];
 }
 
 function isPipelinesResponse(value: unknown): value is PipelinesResponse {
@@ -20,42 +44,77 @@ function isPipelinesResponse(value: unknown): value is PipelinesResponse {
         value !== null &&
         'pipelines' in value &&
         Array.isArray((value as any).pipelines) &&
-        (value as any).pipelines.every((item: unknown) => typeof item === 'string')
+        (value as any).pipelines.every((item: unknown) => 
+            typeof item === 'object' &&
+            item !== null &&
+            'name' in item &&
+            'description' in item &&
+            'parameters' in item &&
+            typeof (item as any).name === 'string' &&
+            typeof (item as any).description === 'string' &&
+            typeof (item as any).parameters === 'object'
+        )
     );
 }
 
-export const MyList: React.FC<ListProps> = ({ context }) => {
+export const MyList: React.FC<ListProps> = ({ context, apiData }) => {
     const studioPro = getStudioProApi(context);
-    const [items, setItems] = useState<ListItem[]>([
-        { id: "1", label: "Item 1" },
-        { id: "2", label: "Item 2" },
-    ]);
+    const [items, setItems] = useState<ListItem[]>([]);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [selectedPipeline, setSelectedPipeline] = useState<ListItem | null>(null);
 
-    // useEffect(() => {
-    studioPro.ui.messagePassing.addMessageHandler<{ type: string, apiData: unknown }>(async messageInfo => {
-        console.log("Received message:", messageInfo);
-        const messageData = messageInfo.message;
+    const handlePipelineClick = (pipeline: ListItem) => {
+        setSelectedId(pipeline.id);
+        setSelectedPipeline(pipeline);
+    };
 
-        if (messageData.type === "listData") {
-            if (isPipelinesResponse(messageData.apiData)) {
-                const transformedItems = messageData.apiData.pipelines.map((pipeline, index) => ({
-                    id: index.toString(),
-                    label: pipeline
-                }));
-                setItems(transformedItems);
-            }
+    useEffect(() => {
+        if (isPipelinesResponse(apiData)) {
+            const transformedItems = apiData.pipelines.map((pipeline, index) => ({
+                id: index.toString(),
+                name: pipeline.name,
+                description: pipeline.description,
+                requiredFields: (pipeline.parameters.required || []).map(fieldName => ({
+                    name: fieldName,
+                    type: ((pipeline.parameters.properties as any)[fieldName] as any)?.type || 'unknown'
+                }))
+            }));
+            setItems(transformedItems);
         }
-    });
-    // }, [studioPro.ui.messagePassing]);
+    }, [apiData]);
+
 
     return (
         <div>
-            <h1>My Title</h1>
-            <ul>
-                {items.map((item) => (
-                    <li key={item.id}>{item.label}</li>
-                ))}
-            </ul>
+            <h1>Available pipelines with API triggers.</h1>
+            <table className={styles.pipelineTable}>
+                <thead>
+                    <tr className={styles.tableHeader}>
+                        <th className={styles.tableHeaderCell}>Name</th>
+                        <th className={styles.tableHeaderCell}>Description</th>
+                        <th className={styles.tableHeaderCell}>Required Fields</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items.map((item) => (
+                        <tr 
+                            key={item.id} 
+                            onClick={() => handlePipelineClick(item)}
+                            className={`${styles.tableRow} ${selectedId === item.id ? styles.selected : ''}`}
+                        >
+                            <td className={styles.tableCell}>{item.name}</td>
+                            <td className={styles.tableCell}>{item.description || '—'}</td>
+                            <td className={styles.tableCell}>
+                                {item.requiredFields.length > 0 
+                                    ? item.requiredFields.map(field => `${field.name} [${field.type}]`).join(', ') 
+                                    : '—'
+                                }
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <CreateMicroflow context={context} pipeline={selectedPipeline} />
         </div>
     );
 };

@@ -5,13 +5,14 @@ interface ButtonProps {
     context: ComponentContext;
     label: string;
     onClick?: (value: string) => void;
+    apiData: unknown;
+    setApiData: (data: unknown) => void;
 }
 
-const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick }) => {
+const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick, apiData, setApiData }) => {
     const [inputValue, setInputValue] = useState("");
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
-    const [apiData, setApiData] = useState<unknown>(null);
     
     const isValidUrl = (urlString: string): boolean => {
         try {
@@ -21,13 +22,6 @@ const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick }) => {
             return false;
         }
     };
-
-    useEffect(() => {
-        if (apiData !== null) {
-            console.log("Sending API data via message passing:", apiData);
-            studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
-        }
-    }, [apiData, studioPro.ui.messagePassing]);
 
     const handleClick = async () => {
         if (!isValidUrl(inputValue)) {
@@ -39,7 +33,7 @@ const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick }) => {
         if (apiurl.endsWith('doc/index.html')) {
             apiurl = apiurl.replace(/doc\/index\.html$/, '');
         }
-        apiurl = apiurl.replace(/\/+$/, '') + '/v1/pipelines';
+        apiurl = apiurl.replace(/\/+$/, '') + '/v1/pipelines/params';
 
         try {
             const response = await fetch(apiurl);
@@ -49,7 +43,6 @@ const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick }) => {
             }
             setApiData(await response.json());
 
-            // await messageApi.show("info", `Successfully fetched data from ${apiurl}. Data returned: ${JSON.stringify(data)}...`);
             onClick?.(apiurl);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);

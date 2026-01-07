@@ -1,7 +1,8 @@
 import {
   list_default,
-  require_react
-} from "./chunk-7UGCNOXR.js";
+  require_react,
+  ui_default
+} from "./chunk-S64N3VPH.js";
 import {
   __commonJS,
   __toESM,
@@ -21684,11 +21685,10 @@ var import_client = __toESM(require_client(), 1);
 
 // src/ui/components/highbytedataloader.tsx
 var import_react = __toESM(require_react(), 1);
-var HighByteLoader = ({ context, label, onClick }) => {
+var HighByteLoader = ({ context, label, onClick, apiData, setApiData }) => {
   const [inputValue, setInputValue] = (0, import_react.useState)("");
   const studioPro = m(context);
   const messageApi = studioPro.ui.messageBoxes;
-  const [apiData, setApiData] = (0, import_react.useState)(null);
   const isValidUrl = (urlString) => {
     try {
       new URL(urlString);
@@ -21697,12 +21697,6 @@ var HighByteLoader = ({ context, label, onClick }) => {
       return false;
     }
   };
-  (0, import_react.useEffect)(() => {
-    if (apiData !== null) {
-      console.log("Sending API data via message passing:", apiData);
-      studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
-    }
-  }, [apiData, studioPro.ui.messagePassing]);
   const handleClick = async () => {
     if (!isValidUrl(inputValue)) {
       await messageApi.show("error", `Invalid URL: "${inputValue}". Please enter a valid URL.`);
@@ -21712,7 +21706,7 @@ var HighByteLoader = ({ context, label, onClick }) => {
     if (apiurl.endsWith("doc/index.html")) {
       apiurl = apiurl.replace(/doc\/index\.html$/, "");
     }
-    apiurl = apiurl.replace(/\/+$/, "") + "/v1/pipelines";
+    apiurl = apiurl.replace(/\/+$/, "") + "/v1/pipelines/params";
     try {
       const response = await fetch(apiurl);
       if (!response.ok) {
@@ -21739,18 +21733,15 @@ var HighByteLoader = ({ context, label, onClick }) => {
 };
 var highbytedataloader_default = HighByteLoader;
 
-// src/ui/index.module.css
-var ui_default = {
-  container: "ui_container",
-  title: "ui_title",
-  description: "ui_description"
-};
-
 // src/ui/index.tsx
 var component = {
   async loaded(componentContext) {
+    const AppContent = () => {
+      const [apiData, setApiData] = (0, import_react2.useState)(null);
+      return /* @__PURE__ */ import_react2.default.createElement("div", { className: ui_default.container }, /* @__PURE__ */ import_react2.default.createElement("h1", { className: ui_default.title }, "HighByte Extension"), /* @__PURE__ */ import_react2.default.createElement("p", { className: ui_default.description }, "Hello from HighByte Extension!"), /* @__PURE__ */ import_react2.default.createElement(highbytedataloader_default, { context: componentContext, label: "Retrieve HighByte APIs", apiData, setApiData }), /* @__PURE__ */ import_react2.default.createElement(list_default, { context: componentContext, apiData }));
+    };
     (0, import_client.createRoot)(document.getElementById("root")).render(
-      /* @__PURE__ */ import_react2.default.createElement(import_react2.StrictMode, null, /* @__PURE__ */ import_react2.default.createElement("div", { className: ui_default.container }, /* @__PURE__ */ import_react2.default.createElement("h1", { className: ui_default.title }, "HighByte Extension"), /* @__PURE__ */ import_react2.default.createElement("p", { className: ui_default.description }, "Hello from HighByte Extension!"), /* @__PURE__ */ import_react2.default.createElement(highbytedataloader_default, { context: componentContext, label: "Retrieve HighByte APIs" }), /* @__PURE__ */ import_react2.default.createElement(list_default, { context: componentContext })))
+      /* @__PURE__ */ import_react2.default.createElement(import_react2.StrictMode, null, /* @__PURE__ */ import_react2.default.createElement(AppContent, null))
     );
   }
 };
