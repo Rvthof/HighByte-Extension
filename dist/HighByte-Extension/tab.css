@@ -1,0 +1,16 @@
+/* src/ui/index.module.css */
+.ui_container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+.ui_title {
+  color: #0066cc;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.ui_description {
+  color: #666;
+  margin-bottom: 20px;
+}
+/*# sourceMappingURL=tab.css.map */
