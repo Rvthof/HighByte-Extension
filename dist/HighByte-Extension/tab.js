@@ -1,7 +1,7 @@
 import {
   list_default,
   require_react
-} from "./chunk-PCTLEYGE.js";
+} from "./chunk-7UGCNOXR.js";
 import {
   __commonJS,
   __toESM,
@@ -21698,7 +21698,10 @@ var HighByteLoader = ({ context, label, onClick }) => {
     }
   };
   (0, import_react.useEffect)(() => {
-    studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
+    if (apiData !== null) {
+      console.log("Sending API data via message passing:", apiData);
+      studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
+    }
   }, [apiData, studioPro.ui.messagePassing]);
   const handleClick = async () => {
     if (!isValidUrl(inputValue)) {

@@ -23,7 +23,10 @@ const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick }) => {
     };
 
     useEffect(() => {
-        studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
+        if (apiData !== null) {
+            console.log("Sending API data via message passing:", apiData);
+            studioPro.ui.messagePassing.sendMessage({ type: "listData", apiData });
+        }
     }, [apiData, studioPro.ui.messagePassing]);
 
     const handleClick = async () => {

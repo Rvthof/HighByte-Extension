@@ -31,21 +31,22 @@ export const MyList: React.FC<ListProps> = ({ context }) => {
         { id: "2", label: "Item 2" },
     ]);
 
-    useEffect(() => {
-        studioPro.ui.messagePassing.addMessageHandler<{ type: string, apiData: unknown }>(async messageInfo => {
-            const messageData = messageInfo.message;
+    // useEffect(() => {
+    studioPro.ui.messagePassing.addMessageHandler<{ type: string, apiData: unknown }>(async messageInfo => {
+        console.log("Received message:", messageInfo);
+        const messageData = messageInfo.message;
 
-            if (messageData.type === "listData") {
-                if (isPipelinesResponse(messageData.apiData)) {
-                    const transformedItems = messageData.apiData.pipelines.map((pipeline, index) => ({
-                        id: index.toString(),
-                        label: pipeline
-                    }));
-                    setItems(transformedItems);
-                }
+        if (messageData.type === "listData") {
+            if (isPipelinesResponse(messageData.apiData)) {
+                const transformedItems = messageData.apiData.pipelines.map((pipeline, index) => ({
+                    id: index.toString(),
+                    label: pipeline
+                }));
+                setItems(transformedItems);
             }
-        });
-    }, [context, studioPro.ui.messagePassing]);
+        }
+    });
+    // }, [studioPro.ui.messagePassing]);
 
     return (
         <div>
