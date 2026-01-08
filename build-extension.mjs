@@ -18,11 +18,6 @@ entryPoints.push({
     out: 'tab'
 })
 
-entryPoints.push({
-    in: 'src/ui/components/list.tsx',
-    out: 'list'
-})
-
 const args = parseArgs(process.argv.slice(2))
 const buildContext = await esbuild.context({
   ...commonConfig,

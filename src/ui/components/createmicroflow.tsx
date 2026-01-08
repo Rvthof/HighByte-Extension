@@ -1,24 +1,7 @@
 import React from 'react';
-import { ComponentContext, getStudioProApi } from '@mendix/extensions-api';
+import { getStudioProApi } from '@mendix/extensions-api';
 import styles from '../index.module.css';
-
-interface RequiredField {
-    name: string;
-    type: string;
-}
-
-interface Pipeline {
-    id: string;
-    name: string;
-    description: string;
-    requiredFields: RequiredField[];
-}
-
-interface CreateMicroflowProps {
-    context: ComponentContext;
-    pipeline: Pipeline | null;
-    onMicroflowCreated?: (microflowName: string) => void;
-}
+import { CreateMicroflowProps } from '../types';
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, onMicroflowCreated }) => {
     const studioPro = getStudioProApi(context);

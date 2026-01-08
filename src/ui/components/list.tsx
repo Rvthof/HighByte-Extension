@@ -1,61 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { ComponentContext, getStudioProApi } from "@mendix/extensions-api";
+import { getStudioProApi } from "@mendix/extensions-api";
 import styles from "../index.module.css";
 import CreateMicroflow from "./createmicroflow";
-
-interface ListProps {
-    context: ComponentContext;
-    apiData: unknown;
-}
-
-interface RequiredField {
-    name: string;
-    type: string;
-}
-
-interface ListItem {
-    id: string;
-    name: string;
-    description: string;
-    requiredFields: RequiredField[];
-}
-
-interface PipelineParameter {
-    type: string;
-    properties: Record<string, unknown>;
-    required?: string[];
-    additionalProperties?: boolean;
-    $defs?: Record<string, unknown>;
-}
-
-interface Pipeline {
-    name: string;
-    description: string;
-    parameters: PipelineParameter;
-}
-
-interface PipelinesResponse {
-    pipelines: Pipeline[];
-}
-
-function isPipelinesResponse(value: unknown): value is PipelinesResponse {
-    return (
-        typeof value === 'object' &&
-        value !== null &&
-        'pipelines' in value &&
-        Array.isArray((value as any).pipelines) &&
-        (value as any).pipelines.every((item: unknown) => 
-            typeof item === 'object' &&
-            item !== null &&
-            'name' in item &&
-            'description' in item &&
-            'parameters' in item &&
-            typeof (item as any).name === 'string' &&
-            typeof (item as any).description === 'string' &&
-            typeof (item as any).parameters === 'object'
-        )
-    );
-}
+import { ListProps, ListItem, isPipelinesResponse } from "../types";
 
 export const MyList: React.FC<ListProps> = ({ context, apiData }) => {
     const studioPro = getStudioProApi(context);

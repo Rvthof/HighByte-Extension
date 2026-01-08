@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { ComponentContext, getStudioProApi } from "@mendix/extensions-api";
+import React, { useState } from 'react';
+import { getStudioProApi } from "@mendix/extensions-api";
+import styles from '../index.module.css';
+import { HighByteLoaderProps } from '../types';
 
-interface ButtonProps {
-    context: ComponentContext;
-    label: string;
-    onClick?: (value: string) => void;
-    apiData: unknown;
-    setApiData: (data: unknown) => void;
-}
-
-const HighByteLoader: React.FC<ButtonProps> = ({ context, label, onClick, apiData, setApiData }) => {
+const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, onClick, apiData, setApiData }) => {
     const [inputValue, setInputValue] = useState("");
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;

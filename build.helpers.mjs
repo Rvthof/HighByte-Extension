@@ -69,6 +69,7 @@ export const commonConfig = {
     assetNames: "assets/[ext]/[name]-[hash]",
     external: ["@mendix/component-framework", "@mendix/model-access-sdk"],
     loader: {
+        ".css": "local-css",
         ".png": "file",
         ".svg": "file",
         ".gif": "file",

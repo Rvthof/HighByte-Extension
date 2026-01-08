@@ -1,7 +1,7 @@
 import {
   MyList,
   list_default
-} from "./chunk-S64N3VPH.js";
+} from "./chunk-IPUTVEMJ.js";
 import "./chunk-FWOXYRNT.js";
 export {
   MyList,
