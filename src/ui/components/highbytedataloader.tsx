@@ -45,15 +45,15 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, onClick
     };
 
     return (
-        <div>
+        <div className={styles.loaderContainer}>
             <input
+                className={styles.loaderInput}
                 type="text"
                 value={inputValue}
-                size={50}
                 placeholder={"Enter your HighByte Swagger URL"}
                 onChange={e => setInputValue(e.target.value)}
             />
-            <button onClick={handleClick}>
+            <button className={styles.loaderButton} onClick={handleClick}>
                 {label}
             </button>
         </div>

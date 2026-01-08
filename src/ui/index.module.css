@@ -140,3 +140,50 @@
 .microflowButton:active {
     background-color: #003d7a;
 }
+
+.loaderContainer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.loaderInput {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.loaderInput:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.loaderInput::placeholder {
+    color: #999;
+}
+
+.loaderButton {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.loaderButton:hover {
+    background-color: #0052a3;
+}
+
+.loaderButton:active {
+    background-color: #003d7a;
+}
