@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/main/index.ts"],
-  "sourcesContent": ["import { IComponent, getStudioProApi } from \"@mendix/extensions-api\";\n\nexport const component: IComponent = {\n    async loaded(componentContext) {\n        const studioPro = getStudioProApi(componentContext);\n        const elementSelector = studioPro.ui.elementSelectors;\n        const messageApi = studioPro.ui.messageBoxes;\n\n        // Open a tab when the menu item is clicked\n        await studioPro.ui.extensionsMenu.add({\n            menuId: \"myextension.MainMenu\",\n            caption: \"HighByte Extension Menu\",\n            action: async () => {\n                await studioPro.ui.tabs.open(\n                    {\n                        title: \"HighByte Extension tab\"\n                    },\n                    {\n                        componentName: \"extension/HighByte-Extension\",\n                        uiEntrypoint: \"tab\"\n                    }\n                )\n            }\n        });\n    }\n}\n\n"],
-  "mappings": ";;;;;AAEO,IAAM,YAAwB;AAAA,EACjC,MAAM,OAAO,kBAAkB;AAC3B,UAAM,YAAY,EAAgB,gBAAgB;AAClD,UAAM,kBAAkB,UAAU,GAAG;AACrC,UAAM,aAAa,UAAU,GAAG;AAGhC,UAAM,UAAU,GAAG,eAAe,IAAI;AAAA,MAClC,QAAQ;AAAA,MACR,SAAS;AAAA,MACT,QAAQ,YAAY;AAChB,cAAM,UAAU,GAAG,KAAK;AAAA,UACpB;AAAA,YACI,OAAO;AAAA,UACX;AAAA,UACA;AAAA,YACI,eAAe;AAAA,YACf,cAAc;AAAA,UAClB;AAAA,QACJ;AAAA,MACJ;AAAA,IACJ,CAAC;AAAA,EACL;AACJ;",
-  "names": []
-}
