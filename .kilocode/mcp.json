@@ -1,0 +1,1 @@
+{"mcpServers":{"local-mcp":{"type":"streamable-http","url":"http://localhost:3001/","alwaysAllow":["create_multiple_entities","save_data","generate_overview_pages","create_multiple_associations"],"disabled":false}}}

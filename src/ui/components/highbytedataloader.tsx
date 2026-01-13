@@ -4,7 +4,7 @@ import styles from '../index.module.css';
 import { HighByteLoaderProps } from '../types';
 
 const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, onClick, apiData, setApiData }) => {
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState("http://127.0.0.1:8885/data/doc/index.html");
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     
