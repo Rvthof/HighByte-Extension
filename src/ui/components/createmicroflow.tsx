@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStudioProApi, Microflows, Primitives } from '@mendix/extensions-api';
+import { getStudioProApi, Microflows, DomainModels } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
 
@@ -7,6 +7,24 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
+    const domainmodels = studioPro.app.model.domainModels;
+
+    const matchTemplateArgType = (typeStr: string, fieldName: string): string => {
+        switch (typeStr.toLowerCase()) {
+            case "string":  
+                return `$${fieldName}`;
+            case "integer":
+                return `toString($${fieldName})`;
+            case "decimal":
+                return `$${fieldName}`;
+            case "boolean":
+                return `if $${fieldName} = true then 'true' else 'false'`;
+            case "datetime":
+                return `$${fieldName}`;
+            default:
+                return `$${fieldName}`;
+        }
+    }
 
     const handleCreateMicroflow = async () => {
         if (!pipeline) {
@@ -38,38 +56,64 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
 
             // Use the objectCollection.addMicroflowParameterObject method
             const objectCollection = microflow.objectCollection;
-            const params = [];
+
+            // Prep for requesthandling template
+            let requestTemplateText = "{{\n";
+            let argList: Microflows.TemplateArgument[] = [];
 
             // Try to add parameters after creation using a for loop
             for (let i = 0; i < pipeline.requiredFields.length; i++) {
                 const field = pipeline.requiredFields[i];
                 try {
-                    // const param = await microflows.createElement("Microflows$MicroflowParameterObject") as Microflows.MicroflowParameterObject;
-                    // param.name = field.name;
-                    
-                    // param.variableType = field.type.charAt(0).toUpperCase() + field.type.slice(1) as "Binary" | "Boolean" | "DateTime" | "Decimal" | "Float" | "Integer" | "String" | "Void";
-                    // param.relativeMiddlePoint.x += 250 * i;
-                    // objectCollection.objects.push(param);
-
                     await objectCollection.addMicroflowParameterObject({
                         name: field.name,
                         type: field.type.charAt(0).toUpperCase() + field.type.slice(1) as "Binary" | "Boolean" | "DateTime" | "Decimal" | "Float" | "Integer" | "String" | "Void"
                     });
-                    const paramObj = await objectCollection.getMicroflowParameterObject(field.name) as Microflows.MicroflowParameterObject;
-                    paramObj.relativeMiddlePoint.x += 250 * i;
-                    paramObj.size = { width: 40, height: 40 };
+                    const paramObj = objectCollection.getMicroflowParameterObject(field.name) as Microflows.MicroflowParameterObject;
+                    paramObj.size = { width: 30, height: 30 };
+                    paramObj.relativeMiddlePoint = { x: 100 + (i * 100), y: 0 };
 
+                    requestTemplateText += `"${field.name}":{${i+1}},\n`;
+
+                    const requestArg = await microflows.createElement("Microflows$TemplateArgument") as Microflows.TemplateArgument;
+                    requestArg.expression = matchTemplateArgType(field.type, field.name);
+                    argList.push(requestArg);
                 } catch (paramError) {
                     console.warn(`Could not add parameter ${field.name}:`, paramError);
                 }
             }
 
+            requestTemplateText = requestTemplateText.slice(0, requestTemplateText.length-2); // Remove trailing comma
+            requestTemplateText += "\n}}";
+
             // Create and add the REST Call action activity
-            const actionActivity = await microflows.createElement("Microflows$ActionActivity") as Microflows.ActionActivity;
             const restCall = await microflows.createElement("Microflows$RestCallAction") as Microflows.RestCallAction;
+            
+            // Set up the request handling template
+            const requestHandler = await microflows.createElement("Microflows$CustomRequestHandling") as Microflows.CustomRequestHandling;
+            const reqHandlingTemplate = await microflows.createElement("Microflows$StringTemplate") as Microflows.StringTemplate;
+
+            reqHandlingTemplate.text = requestTemplateText;
+            reqHandlingTemplate.arguments = argList;
+            requestHandler.template = reqHandlingTemplate;
+            restCall.requestHandling = requestHandler;
+            
+            // Set up the response handling
+            const respHandler = await microflows.createElement("Microflows$ResultHandling") as Microflows.ResultHandling;
+            const datatype = await microflows.createElement("DataTypes$ObjectType") as any;
+            datatype.entity = "System.HttpResponse";
+
+            respHandler.outputVariableName = "RESTResponse";
+            respHandler.storeInVariable = true;
+            respHandler.variableType = datatype;
+            restCall.resultHandling = respHandler;
+            restCall.resultHandlingType = "HttpResponse";
+            
+            // Set up the HTTP configuration
             const httpConfiguration = await microflows.createElement("Microflows$HttpConfiguration") as Microflows.HttpConfiguration;
             const stringTemplate = await microflows.createElement("Microflows$StringTemplate") as Microflows.StringTemplate;
             const templateArg = await microflows.createElement("Microflows$TemplateArgument") as Microflows.TemplateArgument;
+            const actionActivity = await microflows.createElement("Microflows$ActionActivity") as Microflows.ActionActivity;
 
             templateArg.expression = "http://127.0.0.1:8885/data/doc/index.html";
             stringTemplate.text = "{1}";
@@ -77,6 +121,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             httpConfiguration.customLocationTemplate = stringTemplate;
             actionActivity.action = restCall;
             actionActivity.size = { width: 120, height: 60 };
+            actionActivity.relativeMiddlePoint = { x: 400, y: 200 };
 
             restCall.httpConfiguration = httpConfiguration;
             microflow.objectCollection.objects.push(actionActivity);
