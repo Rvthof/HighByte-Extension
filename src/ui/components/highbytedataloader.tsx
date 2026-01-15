@@ -33,7 +33,8 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiD
         apibaseurl = apibaseurl.replace(/\/+$/, '') + '/v1/pipelines/params';
 
         try {
-            const response = await fetch(apibaseurl);
+            const proxy = await studioPro.network.httpProxy.getProxyUrl(apibaseurl);
+            const response = await fetch(proxy);
             if (!response.ok) {
                 await messageApi.show("error", `Failed to fetch from URL. Status: ${response.status} from URL: ${apibaseurl}`);
                 return;
