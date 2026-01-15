@@ -1,8 +1,7 @@
 import React from 'react';
-import { getStudioProApi, Microflows, DomainModels } from '@mendix/extensions-api';
+import { getStudioProApi, Microflows } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
-import { error } from 'console';
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation }) => {
     const studioPro = getStudioProApi(context);
@@ -175,9 +174,17 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
 
             microflow.flows.push(await linkSequence(actionActivity.$ID, exclusiveSplit.$ID));
 
+            // Add a flow for successful response
+            const successActivity = await createMessageActivity("Information", "Successfully received response from HighByte API. Response: {1}", ["$RESTResponse/Content"], "en_US");
+            successActivity.size = { width: 120, height: 60 };
+            successActivity.relativeMiddlePoint = { x: 800, y: 200 };
+            microflow.objectCollection.objects.push(successActivity);
+
+            microflow.flows.push(await linkSequence(exclusiveSplit.$ID, successActivity.$ID, true));
+
             const endEvent = microflow.objectCollection.objects[1] as Microflows.EndEvent;
             endEvent.relativeMiddlePoint = { x: 900, y: 200 };
-            microflow.flows.push(await linkSequence(exclusiveSplit.$ID, endEvent.$ID, true));
+            microflow.flows.push(await linkSequence(successActivity.$ID, endEvent.$ID));
 
             // Add the error flow coming out of the exclusive split
             const errorActivity = await createMessageActivity("Error", "Error: Received status code {1} from HighByte API.", ["toString($RESTResponse/StatusCode)"], "en_US");
