@@ -4,7 +4,7 @@ import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
 import { error } from 'console';
 
-const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, onMicroflowCreated }) => {
+const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation }) => {
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
@@ -146,7 +146,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             const templateArg = await microflows.createElement("Microflows$TemplateArgument") as Microflows.TemplateArgument;
             const actionActivity = await microflows.createElement("Microflows$ActionActivity") as Microflows.ActionActivity;
 
-            templateArg.expression = "http://127.0.0.1:8885/data/doc/index.html";
+            templateArg.expression = apiLocation+"v1/"+pipeline.name+"/value";
             stringTemplate.text = "{1}";
             stringTemplate.arguments = [templateArg];
             httpConfiguration.customLocationTemplate = stringTemplate;
@@ -195,9 +195,6 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
 
             // Save the microflow
             await microflows.save(microflow);
-
-            // Notify the parent component
-            onMicroflowCreated?.(microflowName);
 
             await messageApi.show("info", `Microflow "${microflowName}" created successfully in folder '${folderName}'!`);
         } catch (error) {

@@ -4,7 +4,7 @@ import styles from "../index.module.css";
 import CreateMicroflow from "./createmicroflow";
 import { ListProps, ListItem, isPipelinesResponse } from "../types";
 
-export const MyList: React.FC<ListProps> = ({ context, apiData }) => {
+export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) => {
     const studioPro = getStudioProApi(context);
     const [items, setItems] = useState<ListItem[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData }) => {
                     ))}
                 </tbody>
             </table>
-            <CreateMicroflow context={context} pipeline={selectedPipeline} />
+            <CreateMicroflow context={context} pipeline={selectedPipeline} apiLocation={apiLocation} />
         </div>
     );
 };

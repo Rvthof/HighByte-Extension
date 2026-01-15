@@ -9,6 +9,7 @@ export const component: IComponent = {
     async loaded(componentContext) {
         const AppContent = () => {
             const [apiData, setApiData] = useState<unknown>(null);
+            const [apiLocation, setApiLocation] = useState("");
 
             // Inject CSS into head
             useEffect(() => {
@@ -26,8 +27,8 @@ export const component: IComponent = {
                 <div className={styles.container}>
                     <h1 className={styles.title}>HighByte Extension</h1>
                     <p className={styles.description}>Hello from HighByte Extension!</p>
-                    <HighByteLoader context={componentContext} label="Retrieve pipelines" apiData={apiData} setApiData={setApiData} />
-                    <List context={componentContext} apiData={apiData} />
+                    <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} />
+                    <List context={componentContext} apiData={apiData} apiLocation={apiLocation} />
                 </div>
             );
         };
