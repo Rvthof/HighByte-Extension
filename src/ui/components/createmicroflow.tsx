@@ -2,16 +2,16 @@ import React from 'react';
 import { getStudioProApi, Microflows, DomainModels } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
+import { error } from 'console';
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, onMicroflowCreated }) => {
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
-    const domainmodels = studioPro.app.model.domainModels;
 
     const matchTemplateArgType = (typeStr: string, fieldName: string): string => {
         switch (typeStr.toLowerCase()) {
-            case "string":  
+            case "string":
                 return `$${fieldName}`;
             case "integer":
                 return `toString($${fieldName})`;
@@ -24,6 +24,41 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             default:
                 return `$${fieldName}`;
         }
+    }
+
+    const linkSequence = async (startId: string, endId: string, exclSplitValue?: boolean) => {
+        const seq = await microflows.createElement("Microflows$SequenceFlow") as Microflows.SequenceFlow;
+        seq.origin = startId;
+        seq.destination = endId;
+        if (exclSplitValue !== undefined) {
+            const caseValue = await microflows.createElement("Microflows$EnumerationCase") as Microflows.EnumerationCase;
+            caseValue.value = exclSplitValue ? "true" : "false";
+            seq.caseValues = [caseValue];
+        }
+        return seq;
+    }
+
+    async function createMessageActivity(errorType: Microflows.ShowMessageType, messageText: string, expArgs : string[], languageCode: string) {
+        const errorActivity = await microflows.createElement("Microflows$ActionActivity") as Microflows.ActionActivity;
+        const errorMessageActivity = await microflows.createElement("Microflows$ShowMessageAction") as Microflows.ShowMessageAction;
+        const txtTemplate = await microflows.createElement("Microflows$TextTemplate") as Microflows.TextTemplate;
+        const text = await microflows.createElement("Texts$Text") as any;
+        const translation = await microflows.createElement("Texts$Translation") as any;
+        
+        for (let arg in expArgs) {
+            const errorTemplateArg = await microflows.createElement("Microflows$TemplateArgument") as Microflows.TemplateArgument;
+            errorTemplateArg.expression = expArgs[arg];
+            txtTemplate.arguments.push(errorTemplateArg);
+        }
+
+        translation.languageCode = languageCode;
+        translation.text = messageText;
+        text.translations.push(translation);
+        txtTemplate.text = text;
+        errorMessageActivity.type = errorType;
+        errorMessageActivity.template = txtTemplate;
+        errorActivity.action = errorMessageActivity;
+        return errorActivity;
     }
 
     const handleCreateMicroflow = async () => {
@@ -45,10 +80,6 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             const folderName = module.name || module?.$ID;
 
             // Create the microflow using the Studio Pro API
-            const modules = await studioPro.app.model.projects.getModules();
-            console.log("Available modules:", modules.map(m => m.name + ' ' + m.$ID));
-
-
             // Create the microflow first (without parameters)
             const microflow = await microflows.addMicroflow(containerId, {
                 name: microflowName
@@ -73,7 +104,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
                     paramObj.size = { width: 30, height: 30 };
                     paramObj.relativeMiddlePoint = { x: 100 + (i * 100), y: 0 };
 
-                    requestTemplateText += `"${field.name}":{${i+1}},\n`;
+                    requestTemplateText += `"${field.name}":{${i + 1}},\n`;
 
                     const requestArg = await microflows.createElement("Microflows$TemplateArgument") as Microflows.TemplateArgument;
                     requestArg.expression = matchTemplateArgType(field.type, field.name);
@@ -83,12 +114,12 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
                 }
             }
 
-            requestTemplateText = requestTemplateText.slice(0, requestTemplateText.length-2); // Remove trailing comma
+            requestTemplateText = requestTemplateText.slice(0, requestTemplateText.length - 2); // Remove trailing comma
             requestTemplateText += "\n}}";
 
             // Create and add the REST Call action activity
             const restCall = await microflows.createElement("Microflows$RestCallAction") as Microflows.RestCallAction;
-            
+
             // Set up the request handling template
             const requestHandler = await microflows.createElement("Microflows$CustomRequestHandling") as Microflows.CustomRequestHandling;
             const reqHandlingTemplate = await microflows.createElement("Microflows$StringTemplate") as Microflows.StringTemplate;
@@ -97,7 +128,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             reqHandlingTemplate.arguments = argList;
             requestHandler.template = reqHandlingTemplate;
             restCall.requestHandling = requestHandler;
-            
+
             // Set up the response handling
             const respHandler = await microflows.createElement("Microflows$ResultHandling") as Microflows.ResultHandling;
             const datatype = await microflows.createElement("DataTypes$ObjectType") as any;
@@ -108,7 +139,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             respHandler.variableType = datatype;
             restCall.resultHandling = respHandler;
             restCall.resultHandlingType = "HttpResponse";
-            
+
             // Set up the HTTP configuration
             const httpConfiguration = await microflows.createElement("Microflows$HttpConfiguration") as Microflows.HttpConfiguration;
             const stringTemplate = await microflows.createElement("Microflows$StringTemplate") as Microflows.StringTemplate;
@@ -126,20 +157,41 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
             restCall.httpConfiguration = httpConfiguration;
             microflow.objectCollection.objects.push(actionActivity);
 
+            // Add exclusive split
+            const exclusiveSplit = await microflows.createElement("Microflows$ExclusiveSplit") as Microflows.ExclusiveSplit;
+            const condition = await microflows.createElement("Microflows$ExpressionSplitCondition") as Microflows.ExpressionSplitCondition;
+            condition.expression = "$RESTResponse/StatusCode = 200";
+            exclusiveSplit.splitCondition = condition;
+            exclusiveSplit.size = { width: 60, height: 60 };
+            exclusiveSplit.relativeMiddlePoint = { x: 600, y: 200 };
+            microflow.objectCollection.objects.push(exclusiveSplit);
+
             microflow.flows.pop(); // Remove default flow
 
             // Add the activity into the sequence flow of the microflow
-            const seq = await microflows.createElement("Microflows$SequenceFlow") as Microflows.SequenceFlow;
             const startEvent = microflow.objectCollection.objects[0] as Microflows.StartEvent;
-            seq.origin = startEvent.$ID;
-            seq.destination = actionActivity.$ID;
-            microflow.flows.push(seq);
+            microflow.flows.push(await linkSequence(startEvent.$ID, actionActivity.$ID));
 
-            const seq2 = await microflows.createElement("Microflows$SequenceFlow") as Microflows.SequenceFlow;
+            microflow.flows.push(await linkSequence(actionActivity.$ID, exclusiveSplit.$ID));
+
             const endEvent = microflow.objectCollection.objects[1] as Microflows.EndEvent;
-            seq2.origin = actionActivity.$ID;
-            seq2.destination = endEvent.$ID;
-            microflow.flows.push(seq2);
+            endEvent.relativeMiddlePoint = { x: 900, y: 200 };
+            microflow.flows.push(await linkSequence(exclusiveSplit.$ID, endEvent.$ID, true));
+
+            // Add the error flow coming out of the exclusive split
+            const errorActivity = await createMessageActivity("Error", "Error: Received status code {1} from HighByte API.", ["toString($RESTResponse/StatusCode)"], "en_US");
+
+            errorActivity.size = { width: 120, height: 60 };
+            errorActivity.relativeMiddlePoint = { x: 800, y: 300 };
+            microflow.objectCollection.objects.push(errorActivity);
+
+            microflow.flows.push(await linkSequence(exclusiveSplit.$ID, errorActivity.$ID, false));
+
+            const errorEndEvent = await microflows.createElement("Microflows$EndEvent") as Microflows.EndEvent;
+            errorEndEvent.relativeMiddlePoint = { x: 900, y: 300 };
+            microflow.objectCollection.objects.push(errorEndEvent);
+            microflow.flows.push(await linkSequence(errorActivity.$ID, errorEndEvent.$ID));
+
 
             // Save the microflow
             await microflows.save(microflow);
@@ -178,3 +230,5 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, on
 };
 
 export default CreateMicroflow;
+
+
