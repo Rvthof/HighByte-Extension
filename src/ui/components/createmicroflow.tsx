@@ -72,6 +72,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             const microflowName = `${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
 
             const module = await studioPro.app.model.projects.getModule("Test");
+
             if (!module) {
                 await messageApi.show("error", "No module found with the specified name.");
                 return;
@@ -191,7 +192,6 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             errorEndEvent.relativeMiddlePoint = { x: 900, y: 300 };
             microflow.objectCollection.objects.push(errorEndEvent);
             microflow.flows.push(await linkSequence(errorActivity.$ID, errorEndEvent.$ID));
-
 
             // Save the microflow
             await microflows.save(microflow);
