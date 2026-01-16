@@ -10,24 +10,7 @@ import {
     setupMicroflowParameters,
     setupRestCallAction,
     setupExclusiveSplit,
-    createEndEvent,
 } from '../services/microflowService';
-
-// Helper function to build request template
-const buildRequestTemplate = (
-    fields: Array<{ name: string; type: string }>,
-): { templateText: string; fieldCount: number } => {
-    let requestTemplateText = '{{\n';
-
-    fields.forEach((field, index) => {
-        requestTemplateText += `"${field.name}":{${index + 1}},\n`;
-    });
-
-    requestTemplateText = requestTemplateText.slice(0, -2);
-    requestTemplateText += '\n}}';
-
-    return { templateText: requestTemplateText, fieldCount: fields.length };
-};
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation }) => {
     const [modules, setModules] = useState<string[]>([]);
@@ -89,19 +72,23 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             const microflow = await microflows.addMicroflow(containerId, { name: microflowName });
             const objectCollection = microflow.objectCollection;
 
-            const { templateText: requestTemplateText } = buildRequestTemplate(pipeline.requiredFields);
+            // Build request template inline
+            let requestTemplateText = pipeline.requiredFields.length === 0 ? '{{}}' : '{{\n';
+            if (pipeline.requiredFields.length > 0) {
+                pipeline.requiredFields.forEach((field, index) => {
+                    requestTemplateText += `"${field.name}":{${index + 1}},\n`;
+                });
+                requestTemplateText = requestTemplateText.slice(0, -2);
+                requestTemplateText += '\n}}';
+            }
 
             // Add microflow parameters
             const argList = await setupMicroflowParameters(objectCollection, pipeline.requiredFields);
 
             // Setup REST call action
-            const { restCall, actionActivity } = await setupRestCallAction(requestTemplateText, argList);
+            const { restCall, actionActivity } = await setupRestCallAction(requestTemplateText, argList, `'${apiLocation}v1/${pipeline.name}/value'`);
             actionActivity.size = { width: 120, height: 60 };
             actionActivity.relativeMiddlePoint = { x: 400, y: 200 };
-
-            // Set the API URL
-            const firstArg = (restCall.httpConfiguration as any).customLocationTemplate.arguments[0];
-            firstArg.expression = `${apiLocation}v1/${pipeline.name}/value`;
 
             microflow.objectCollection.objects.push(actionActivity);
 
@@ -131,9 +118,8 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
 
             microflow.flows.push(await createSequenceFlow(exclusiveSplit.$ID, successActivity.$ID, true));
 
-            const endEvent = await createEndEvent();
+            const endEvent = microflow.objectCollection.objects[1]; // Retrieve the default end event that was created with the microflow
             endEvent.relativeMiddlePoint = { x: 900, y: 200 };
-            microflow.objectCollection.objects.push(endEvent);
             microflow.flows.push(await createSequenceFlow(successActivity.$ID, endEvent.$ID));
 
             // Add error flow
@@ -149,7 +135,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
 
             microflow.flows.push(await createSequenceFlow(exclusiveSplit.$ID, errorActivity.$ID, false));
 
-            const errorEndEvent = await createEndEvent();
+            const errorEndEvent = await microflows.createElement('Microflows$EndEvent') as Microflows.EndEvent;
             errorEndEvent.relativeMiddlePoint = { x: 900, y: 300 };
             microflow.objectCollection.objects.push(errorEndEvent);
             microflow.flows.push(await createSequenceFlow(errorActivity.$ID, errorEndEvent.$ID));

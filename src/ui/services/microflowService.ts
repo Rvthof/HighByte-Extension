@@ -46,11 +46,11 @@ export const createMessageActivity = async (errorType: Microflows.ShowMessageTyp
     const text = (await microflows.createElement('Texts$Text')) as any;
     const translation = (await microflows.createElement('Texts$Translation')) as any;
 
-    expArgs.forEach(async (arg) => {
+    for (const arg of expArgs) {
         const errorTemplateArg = (await microflows.createElement('Microflows$TemplateArgument')) as Microflows.TemplateArgument;
         errorTemplateArg.expression = arg;
         txtTemplate.arguments.push(errorTemplateArg);
-    });
+    }
 
     translation.languageCode = languageCode;
     translation.text = messageText;
@@ -94,7 +94,7 @@ export const setupMicroflowParameters = async (objectCollection: any, requiredFi
     return argList;
 };
 
-export const setupRestCallAction = async (requestTemplateText: string, argList: Microflows.TemplateArgument[],): Promise<{ restCall: Microflows.RestCallAction; actionActivity: Microflows.ActionActivity; }> => {
+export const setupRestCallAction = async (requestTemplateText: string, argList: Microflows.TemplateArgument[], expression: string,): Promise<{ restCall: Microflows.RestCallAction; actionActivity: Microflows.ActionActivity; }> => {
     const microflows = getMicroflows();
     const restCall = (await microflows.createElement('Microflows$RestCallAction')) as Microflows.RestCallAction;
 
@@ -123,6 +123,7 @@ export const setupRestCallAction = async (requestTemplateText: string, argList: 
     const actionActivity = (await microflows.createElement('Microflows$ActionActivity')) as Microflows.ActionActivity;
 
     stringTemplate.text = '{1}';
+    templateArg.expression = expression;
     stringTemplate.arguments = [templateArg];
     httpConfiguration.customLocationTemplate = stringTemplate;
     actionActivity.action = restCall;
@@ -139,10 +140,4 @@ export const setupExclusiveSplit = async (expression: string) => {
     condition.expression = expression;
     exclusiveSplit.splitCondition = condition;
     return exclusiveSplit;
-};
-
-export const createEndEvent = async () => {
-    const microflows = getMicroflows();
-    const endEvent = (await microflows.createElement('Microflows$EndEvent')) as Microflows.EndEvent;
-    return endEvent;
 };
