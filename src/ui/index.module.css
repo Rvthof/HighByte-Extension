@@ -158,6 +158,40 @@
     background-color: #003d7a;
 }
 
+.microflowSelectContainer {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.microflowSelectLabel {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.microflowSelect {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.microflowSelect:hover {
+    border-color: #999;
+}
+
+.microflowSelect:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
 .loaderContainer {
     display: flex;
     gap: 10px;
@@ -357,6 +391,30 @@
 
 .darkMode .microflowButton:active {
     background-color: #003d7a;
+}
+
+.darkMode .microflowSelectLabel {
+    color: #e0e0e0;
+}
+
+.darkMode .microflowSelect {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+.darkMode .microflowSelect:hover {
+    border-color: #666;
+}
+
+.darkMode .microflowSelect:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
+}
+
+.darkMode .microflowSelect option {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
 }
 
 .darkMode .loaderInput {

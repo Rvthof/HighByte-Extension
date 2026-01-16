@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { getStudioProApi, Microflows } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation }) => {
+    const [modules, setModules] = useState<any[]>([]);
+    const [selectedModuleName, setSelectedModuleName] = useState<string>('');
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
+
+    useEffect(() => {
+        const fetchModules = async () => {
+            try {
+                const allModules = await studioPro.app.model.projects.getModules();
+                const modulesList = Array.from(allModules)
+                    .filter(module => !module.fromAppStore && module.name !== 'System')
+                    .map(module => module.name);
+                setModules(modulesList);
+                if (modulesList.length > 0) {
+                    setSelectedModuleName(modulesList[0]);
+                }
+            } catch (error) {
+                console.error('Error fetching modules:', error);
+                await messageApi.show('error', 'Failed to load modules');
+            }
+        };
+        fetchModules();
+    }, []);
+
 
     const matchTemplateArgType = (typeStr: string, fieldName: string): string => {
         switch (typeStr.toLowerCase()) {
@@ -70,7 +92,12 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             // Generate microflow name based on pipeline name
             const microflowName = `${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
 
-            const module = await studioPro.app.model.projects.getModule("Test");
+            if (!selectedModuleName) {
+                await messageApi.show('error', 'Please select a module to create the microflow in.');
+                return;
+            }
+
+            const module = await studioPro.app.model.projects.getModule(selectedModuleName);
 
             if (!module) {
                 await messageApi.show("error", "No module found with the specified name.");
@@ -224,6 +251,21 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
                             </li>
                         ))}
                     </ul>
+                    <div className={styles.microflowSelectContainer}>
+                        <label htmlFor="module-select" className={styles.microflowSelectLabel}>Select Module:</label>
+                        <select
+                            id="module-select"
+                            value={selectedModuleName}
+                            onChange={(e) => setSelectedModuleName(e.target.value)}
+                            className={styles.microflowSelect}
+                        >
+                            {modules.map((moduleName) => (
+                                <option key={moduleName} value={moduleName}>
+                                    {moduleName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                     <button className={styles.microflowButton} onClick={handleCreateMicroflow}>
                         Create Microflow
                     </button>
