@@ -25,11 +25,7 @@ const capitalizeType = (type: string): string => {
     return type.charAt(0).toUpperCase() + type.slice(1);
 };
 
-export const createSequenceFlow = async (
-    startId: string,
-    endId: string,
-    exclSplitValue?: boolean,
-): Promise<Microflows.SequenceFlow> => {
+export const createSequenceFlow = async (startId: string, endId: string, exclSplitValue?: boolean,): Promise<Microflows.SequenceFlow> => {
     const microflows = getMicroflows();
     const seq = (await microflows.createElement('Microflows$SequenceFlow')) as Microflows.SequenceFlow;
     seq.origin = startId;
@@ -42,12 +38,7 @@ export const createSequenceFlow = async (
     return seq;
 };
 
-export const createMessageActivity = async (
-    errorType: Microflows.ShowMessageType,
-    messageText: string,
-    expArgs: string[],
-    languageCode: string,
-): Promise<Microflows.ActionActivity> => {
+export const createMessageActivity = async (errorType: Microflows.ShowMessageType, messageText: string, expArgs: string[], languageCode: string,): Promise<Microflows.ActionActivity> => {
     const microflows = getMicroflows();
     const errorActivity = (await microflows.createElement('Microflows$ActionActivity')) as Microflows.ActionActivity;
     const errorMessageActivity = (await microflows.createElement('Microflows$ShowMessageAction')) as Microflows.ShowMessageAction;
@@ -71,10 +62,7 @@ export const createMessageActivity = async (
     return errorActivity;
 };
 
-export const setupMicroflowParameters = async (
-    objectCollection: any,
-    requiredFields: Array<{ name: string; type: string }>,
-): Promise<Microflows.TemplateArgument[]> => {
+export const setupMicroflowParameters = async (objectCollection: any, requiredFields: Array<{ name: string; type: string }>,): Promise<Microflows.TemplateArgument[]> => {
     const microflows = getMicroflows();
     const argList: Microflows.TemplateArgument[] = [];
     for (let i = 0; i < requiredFields.length; i++) {
@@ -106,13 +94,7 @@ export const setupMicroflowParameters = async (
     return argList;
 };
 
-export const setupRestCallAction = async (
-    requestTemplateText: string,
-    argList: Microflows.TemplateArgument[],
-): Promise<{
-    restCall: Microflows.RestCallAction;
-    actionActivity: Microflows.ActionActivity;
-}> => {
+export const setupRestCallAction = async (requestTemplateText: string, argList: Microflows.TemplateArgument[],): Promise<{ restCall: Microflows.RestCallAction; actionActivity: Microflows.ActionActivity; }> => {
     const microflows = getMicroflows();
     const restCall = (await microflows.createElement('Microflows$RestCallAction')) as Microflows.RestCallAction;
 

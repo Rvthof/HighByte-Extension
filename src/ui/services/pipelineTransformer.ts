@@ -27,11 +27,7 @@ export const transformPipelineData = (apiData: any): TransformedPipeline[] => {
     }));
 };
 
-export const calculatePaginationValues = (
-    itemsLength: number,
-    currentPage: number,
-    itemsPerPage: number,
-) => {
+export const calculatePaginationValues = (itemsLength: number, currentPage: number, itemsPerPage: number,) => {
     const totalPages = Math.ceil(itemsLength / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
