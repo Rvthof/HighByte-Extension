@@ -9,6 +9,13 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
     const [items, setItems] = useState<ListItem[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [selectedPipeline, setSelectedPipeline] = useState<ListItem | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(items.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedItems = items.slice(startIndex, endIndex);
 
     const handlePipelineClick = (pipeline: ListItem) => {
         setSelectedId(pipeline.id);
@@ -43,7 +50,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map((item) => (
+                    {paginatedItems.map((item) => (
                         <tr 
                             key={item.id} 
                             onClick={() => handlePipelineClick(item)}
@@ -53,7 +60,16 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
                             <td className={styles.tableCell}>{item.description || '—'}</td>
                             <td className={styles.tableCell}>
                                 {item.requiredFields.length > 0 
-                                    ? item.requiredFields.map(field => `${field.name} [${field.type}]`).join(', ') 
+                                    ? (
+                                        <div className={styles.fieldsBadgeContainer}>
+                                            {item.requiredFields.map((field, index) => (
+                                                <span key={index} className={styles.fieldBadge}>
+                                                    <span className={styles.fieldName}>{field.name}</span>
+                                                    <span className={styles.fieldType}>{field.type}</span>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )
                                     : '—'
                                 }
                             </td>
@@ -61,6 +77,33 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
                     ))}
                 </tbody>
             </table>
+            {items.length > itemsPerPage && (
+                <div className={styles.pagination}>
+                    <button 
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={styles.pageButton}
+                    >
+                        Previous
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                        <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`${styles.pageButton} ${currentPage === pageNum ? styles.pageButtonActive : ''}`}
+                        >
+                            {pageNum}
+                        </button>
+                    ))}
+                    <button 
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className={styles.pageButton}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
             <CreateMicroflow context={context} pipeline={selectedPipeline} apiLocation={apiLocation} />
         </div>
     );

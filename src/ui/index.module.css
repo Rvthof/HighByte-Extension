@@ -6,13 +6,17 @@
 
 .title {
     color: #0066cc;
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
 .description {
-    color: #666;
-    margin-bottom: 20px;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 24px;
 }
 
 .pipelineTable {
@@ -22,6 +26,7 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;
+    table-layout: fixed;
 }
 
 .tableHeader {
@@ -38,6 +43,18 @@
 
 .tableHeaderCell:last-child {
     border-right: none;
+}
+
+.tableHeaderCell:nth-child(1) {
+    width: 30%;
+}
+
+.tableHeaderCell:nth-child(2) {
+    width: 30%;
+}
+
+.tableHeaderCell:nth-child(3) {
+    width: 40%;
 }
 
 .tableRow {
@@ -186,4 +203,221 @@
 
 .loaderButton:active {
     background-color: #003d7a;
+}
+
+.pagination {
+    display: flex;
+    gap: 8px;
+    margin-top: 1.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.pageButton {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
+
+.pageButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageButtonActive {
+    background-color: #0066cc;
+    color: white;
+    border-color: #0066cc;
+}
+
+.fieldsBadgeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.fieldBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #e8f4f8;
+    border: 1px solid #0066cc;
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.fieldName {
+    font-weight: 600;
+    color: #0066cc;
+}
+
+.fieldType {
+    color: #666;
+    font-size: 11px;
+    background-color: rgba(0, 102, 204, 0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+/* Dark Mode Styles */
+.darkMode {
+    background-color: #1e1e1e;
+}
+
+.darkMode h1 {
+    color: #4da6ff;
+}
+
+.darkMode .title {
+    color: #4da6ff;
+}
+
+.darkMode .description {
+    color: #b0b0b0;
+}
+
+.darkMode .pipelineTable {
+    border-color: #333;
+}
+
+.darkMode .tableHeader {
+    background-color: #2a2a2a;
+    border-bottom-color: #444;
+}
+
+.darkMode .tableHeaderCell {
+    border-right-color: #333;
+    color: #e0e0e0;
+}
+
+.darkMode .tableRow {
+    border-bottom-color: #333;
+}
+
+.darkMode .tableRow:hover {
+    background-color: #2a2a2a;
+}
+
+.darkMode .tableRow.selected {
+    background-color: #1a3a52;
+}
+
+.darkMode .tableRow:hover.selected {
+    background-color: #1a3a52;
+}
+
+.darkMode .tableCell {
+    border-right-color: #333;
+    color: #e0e0e0;
+}
+
+.darkMode .microflowSection {
+    background-color: #2a2a2a;
+    border-color: #333;
+}
+
+.darkMode .microflowTitle {
+    color: #4da6ff;
+}
+
+.darkMode .microflowDescription {
+    color: #b0b0b0;
+}
+
+.darkMode .microflowSection li {
+    color: #c0c0c0;
+}
+
+.darkMode .microflowSection code {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.darkMode .microflowButton {
+    background-color: #0066cc;
+    color: white;
+}
+
+.darkMode .microflowButton:hover {
+    background-color: #0052a3;
+}
+
+.darkMode .microflowButton:active {
+    background-color: #003d7a;
+}
+
+.darkMode .loaderInput {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+.darkMode .loaderInput:focus {
+    border-color: #4da6ff;
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
+}
+
+.darkMode .loaderInput::placeholder {
+    color: #666;
+}
+
+.darkMode .loaderButton {
+    background-color: #0066cc;
+    color: white;
+}
+
+.darkMode .loaderButton:hover {
+    background-color: #0052a3;
+}
+
+.darkMode .loaderButton:active {
+    background-color: #003d7a;
+}
+
+.darkMode .pageButton {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+.darkMode .pageButton:hover:not(:disabled) {
+    background-color: #3a3a3a;
+    border-color: #666;
+}
+
+.darkMode .pageButton:disabled {
+    opacity: 0.5;
+}
+
+.darkMode .pageButtonActive {
+    background-color: #0066cc;
+    color: white;
+    border-color: #0066cc;
+}
+
+.darkMode .fieldBadge {
+    background-color: #1a3a52;
+    border-color: #4da6ff;
+}
+
+.darkMode .fieldName {
+    color: #4da6ff;
+}
+
+.darkMode .fieldType {
+    color: #b0b0b0;
+    background-color: rgba(77, 166, 255, 0.1);
 }
