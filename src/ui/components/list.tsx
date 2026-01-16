@@ -3,6 +3,7 @@ import { getStudioProApi } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import CreateMicroflow from './createmicroflow';
 import { ListProps, ListItem, isPipelinesResponse } from '../types';
+import { transformPipelineData, calculatePaginationValues } from '../services/pipelineTransformer';
 
 export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) => {
     const studioPro = getStudioProApi(context);
@@ -12,10 +13,8 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
     const [currentPage, setCurrentPage] = useState(1);
 
     const itemsPerPage = 10;
-    const totalPages = Math.ceil(items.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = items.slice(startIndex, endIndex);
+    const pagination = calculatePaginationValues(items.length, currentPage, itemsPerPage);
+    const paginatedItems = items.slice(pagination.startIndex, pagination.endIndex);
 
     const handlePipelineClick = (pipeline: ListItem) => {
         setSelectedId(pipeline.id);
@@ -24,15 +23,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
 
     useEffect(() => {
         if (isPipelinesResponse(apiData)) {
-            const transformedItems = apiData.pipelines.map((pipeline, index) => ({
-                id: index.toString(),
-                name: pipeline.name,
-                description: pipeline.description,
-                requiredFields: (pipeline.parameters.required || []).map((fieldName) => ({
-                    name: fieldName,
-                    type: ((pipeline.parameters.properties as any)[fieldName] as any)?.type || 'unknown',
-                })),
-            }));
+            const transformedItems = transformPipelineData(apiData);
             setItems(transformedItems);
         }
     }, [apiData]);
@@ -85,7 +76,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
                     >
                         Previous
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
                         <button
                             key={pageNum}
                             onClick={() => setCurrentPage(pageNum)}
@@ -96,7 +87,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation }) =
                     ))}
                     <button
                         onClick={() => setCurrentPage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
+                        disabled={currentPage === pagination.totalPages}
                         className={styles.pageButton}
                     >
                         Next
