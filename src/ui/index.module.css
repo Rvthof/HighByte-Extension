@@ -85,9 +85,10 @@
 }
 
 .tableHeaderCell:last-child { border-right: none; }
-.tableHeaderCell:nth-child(1) { width: 30%; }
+.tableHeaderCell:nth-child(1) { width: 20%; }
 .tableHeaderCell:nth-child(2) { width: 30%; }
-.tableHeaderCell:nth-child(3) { width: 40%; }
+.tableHeaderCell:nth-child(3) { width: 30%; }
+.tableHeaderCell:nth-child(4) { width: 20%; }
 
 .darkMode .tableHeaderCell {
     color: var(--text-dark);
@@ -116,9 +117,13 @@
 .tableCell {
     padding: 10px 8px;
     border-right: 1px solid var(--border-color);
+    vertical-align: middle;
 }
 
-.tableCell:last-child { border-right: none; }
+.tableCell:last-child { 
+    border-right: none;
+    text-align: center;
+}
 
 .darkMode .tableCell {
     color: var(--text-dark);
@@ -398,4 +403,71 @@
 .darkMode .fieldType {
     color: var(--text-light);
     background-color: rgba(77, 166, 255, 0.1);
+}
+
+/* Tabs */
+.tabNavigation {
+    display: flex;
+    gap: 0;
+    margin-top: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tabButton {
+    background-color: transparent;
+    color: var(--text-muted);
+    padding: 12px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font: 500 14px;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.tabButton:hover {
+    color: var(--text-dark);
+}
+
+.tabButtonActive {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.darkMode .tabButton {
+    color: var(--text-light);
+}
+
+.darkMode .tabButton:hover {
+    color: var(--text-dark);
+}
+
+.darkMode .tabButtonActive {
+    color: var(--primary-light);
+    border-bottom-color: var(--primary-light);
+}
+
+.tabContent {
+    margin-top: 1.5rem;
+}
+
+.tabContent h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.darkMode .tabContent h2 {
+    color: var(--text-dark);
+}
+
+.emptyMessage {
+    color: var(--text-light);
+    font-size: 14px;
+    text-align: center;
+    padding: 2rem;
+}
+
+.darkMode .emptyMessage {
+    color: var(--text-light);
 }

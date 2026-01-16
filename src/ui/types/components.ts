@@ -5,6 +5,7 @@ export interface ListProps {
     context: ComponentContext;
     apiData: unknown;
     apiLocation: string;
+    microflowsWithRestActions?: Array<{ microflowID: string; id: string; name: string; moduleName: string; pipelineName: string }>;
 }
 
 export interface CreateMicroflowProps {
@@ -18,4 +19,5 @@ export interface HighByteLoaderProps {
     label: string;
     setApiData: (data: unknown) => void;
     setApiLocation: (value: string) => void;
+    setMicroflowsWithRestActions?: (data: Array<{ microflowID: string; id: string; name: string; moduleName: string; pipelineName: string }>) => void;
 }

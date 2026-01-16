@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getStudioProApi, Microflows } from '@mendix/extensions-api';
+import { Microflows } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
-import { initStudioPro } from '../services/studioProService';
+import { getStudioPro } from '../services/studioProService';
 import { fetchModules, getModuleById } from '../services/moduleService';
 import {
     createSequenceFlow,
@@ -17,14 +17,9 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
     const [selectedModuleName, setSelectedModuleName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const studioPro = getStudioProApi(context);
+    const studioPro = getStudioPro();
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
-
-    // Initialize the StudioPro service on mount
-    useEffect(() => {
-        initStudioPro(studioPro);
-    }, [studioPro]);
 
     useEffect(() => {
         const loadModules = async () => {

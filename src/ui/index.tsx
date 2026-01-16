@@ -2,12 +2,16 @@ import React, { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { IComponent, getStudioProApi } from "@mendix/extensions-api";
 import { List, HighByteLoader } from "./components/_components";
+import { initStudioPro } from "./services/studioProService";
 import styles from "./index.module.css";
 import "./index.module.css";
 
 export const component: IComponent = {
     async loaded(componentContext) {
         const studioPro = getStudioProApi(componentContext);
+        // Initialize the StudioPro service before rendering any components
+        initStudioPro(studioPro);
+        
         const preferencesApi = studioPro.ui.preferences;
         const preferences = await preferencesApi.getPreferences();
         const isDarkMode = preferences.theme === "Dark";
@@ -15,6 +19,7 @@ export const component: IComponent = {
         const AppContent = () => {
             const [apiData, setApiData] = useState<unknown>(null);
             const [apiLocation, setApiLocation] = useState("");
+            const [microflowsWithRestActions, setMicroflowsWithRestActions] = useState<Array<{ microflowID: string; id: string; name: string; moduleName: string; pipelineName: string }>>([]);
 
             // Inject CSS into head
             useEffect(() => {
@@ -32,8 +37,8 @@ export const component: IComponent = {
                 <div className={`${styles.container} ${isDarkMode ? styles.darkMode : ''}`}>
                     <h1 className={styles.title}>HighByte Extension</h1>
                     <p className={styles.description}>Seamlessly integrate HighByte pipelines with your Mendix application. This extension automatically discovers your available pipelines from the HighByte Swagger API and enables you to quickly generate microflows that interact with your data pipelines.</p>
-                    <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} />
-                    <List context={componentContext} apiData={apiData} apiLocation={apiLocation} />
+                    <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} setMicroflowsWithRestActions={setMicroflowsWithRestActions} />
+                    <List context={componentContext} apiData={apiData} apiLocation={apiLocation} microflowsWithRestActions={microflowsWithRestActions} />
                 </div>
             );
         };
