@@ -1,121 +1,166 @@
+:root {
+    --primary-color: #0066cc;
+    --primary-hover: #0052a3;
+    --primary-active: #003d7a;
+    --primary-light: #4da6ff;
+    --border-color: #ddd;
+    --bg-light: #f5f5f5;
+    --bg-white: #fff;
+    --text-dark: #333;
+    --text-muted: #555;
+    --text-light: #666;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --border-radius: 4px;
+    --transition: 0.2s ease;
+}
+
+.darkMode {
+    --primary-color: #0066cc;
+    --primary-hover: #0052a3;
+    --primary-active: #003d7a;
+    --primary-light: #4da6ff;
+    --border-color: #333;
+    --bg-light: #1e1e1e;
+    --bg-white: #2a2a2a;
+    --text-dark: #e0e0e0;
+    --text-muted: #c0c0c0;
+    --text-light: #b0b0b0;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --text-secondary: #b0b0b0;
+}
+
+.darkMode h1 { color: var(--primary-light); }
+
 .container {
     padding: 20px;
-    background-color: #f5f5f5;
+    background-color: var(--bg-light);
     border-radius: 8px;
 }
 
 .title {
-    color: #0066cc;
+    color: var(--primary-color);
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 12px;
     letter-spacing: -0.5px;
 }
 
+.darkMode .title { color: var(--primary-light); }
+
 .description {
-    color: #555;
+    color: var(--text-muted);
     font-size: 15px;
     line-height: 1.6;
     margin-bottom: 24px;
 }
 
+.darkMode .description { color: var(--text-light); }
+
+/* Table Styles */
 .pipelineTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     overflow: hidden;
     table-layout: fixed;
 }
 
 .tableHeader {
-    background-color: #f0f0f0;
-    border-bottom: 2px solid #333;
+    background-color: var(--bg-light);
+    border-bottom: 2px solid var(--text-dark);
+}
+
+.darkMode .tableHeader {
+    background-color: #2a2a2a;
+    border-bottom-color: #444;
 }
 
 .tableHeaderCell {
     padding: 12px 8px;
     text-align: left;
     font-weight: 600;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--border-color);
 }
 
-.tableHeaderCell:last-child {
-    border-right: none;
-}
+.tableHeaderCell:last-child { border-right: none; }
+.tableHeaderCell:nth-child(1) { width: 30%; }
+.tableHeaderCell:nth-child(2) { width: 30%; }
+.tableHeaderCell:nth-child(3) { width: 40%; }
 
-.tableHeaderCell:nth-child(1) {
-    width: 30%;
-}
-
-.tableHeaderCell:nth-child(2) {
-    width: 30%;
-}
-
-.tableHeaderCell:nth-child(3) {
-    width: 40%;
+.darkMode .tableHeaderCell {
+    color: var(--text-dark);
+    border-right-color: var(--border-color);
 }
 
 .tableRow {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-color);
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition);
 }
 
-.tableRow:last-child {
-    border-bottom: none;
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background-color: var(--bg-light); }
+.tableRow:hover.selected,
+.tableRow.selected { background-color: #e3f2fd; }
+
+.darkMode .tableRow {
+    border-bottom-color: var(--border-color);
 }
 
-.tableRow:hover {
-    background-color: #f5f5f5;
-}
-
-.tableRow:hover.selected {
-    background-color: #e3f2fd;
-}
-
-.tableRow.selected {
-    background-color: #e3f2fd;
-}
+.darkMode .tableRow:hover { background-color: #2a2a2a; }
+.darkMode .tableRow:hover.selected,
+.darkMode .tableRow.selected { background-color: #1a3a52; }
 
 .tableCell {
     padding: 10px 8px;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--border-color);
 }
 
-.tableCell:last-child {
-    border-right: none;
+.tableCell:last-child { border-right: none; }
+
+.darkMode .tableCell {
+    color: var(--text-dark);
+    border-right-color: var(--border-color);
 }
 
+/* Microflow Section */
 .microflowSection {
     margin-top: 2rem;
     padding: 1.5rem;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.darkMode .microflowSection {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
 }
 
 .microflowTitle {
     font-size: 18px;
     font-weight: 600;
-    color: #0066cc;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
+.darkMode .microflowTitle { color: var(--primary-light); }
+
 .microflowDescription {
-    color: #666;
+    color: var(--text-light);
     margin-bottom: 1rem;
     font-size: 14px;
 }
 
+.darkMode .microflowDescription { color: var(--text-light); }
+
 .microflowSection h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    font: 600 14px;
+    color: var(--text-dark);
+    margin: 1rem 0.5rem 0.5rem 0;
 }
 
 .microflowSection ul {
@@ -126,38 +171,48 @@
 
 .microflowSection li {
     padding: 0.5rem 0;
-    color: #555;
+    color: var(--text-muted);
     font-size: 14px;
 }
 
+.darkMode .microflowSection li { color: var(--text-muted); }
+
 .microflowSection code {
-    background-color: #f5f5f5;
+    background-color: var(--bg-light);
     padding: 0.2rem 0.4rem;
     border-radius: 2px;
     font-family: monospace;
     font-size: 12px;
 }
 
-.microflowButton {
-    background-color: #0066cc;
+.darkMode .microflowSection code {
+    background-color: #1a1a1a;
+    color: var(--text-dark);
+}
+
+/* Buttons */
+.microflowButton,
+.loaderButton {
+    background-color: var(--primary-color);
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition);
 }
 
-.microflowButton:hover {
-    background-color: #0052a3;
-}
+.microflowButton:hover,
+.loaderButton:hover { background-color: var(--primary-hover); }
 
-.microflowButton:active {
-    background-color: #003d7a;
-}
+.microflowButton:active,
+.loaderButton:active { background-color: var(--primary-active); }
 
+.loaderButton { white-space: nowrap; }
+
+/* Module Select */
 .microflowSelectContainer {
     margin: 1rem 0;
     display: flex;
@@ -167,31 +222,48 @@
 
 .microflowSelectLabel {
     font-weight: 600;
-    color: #333;
+    color: var(--text-dark);
     font-size: 14px;
 }
+
+.darkMode .microflowSelectLabel { color: var(--text-dark); }
 
 .microflowSelect {
     padding: 10px 12px;
     font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-white);
+    color: var(--text-dark);
     cursor: pointer;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition);
 }
 
-.microflowSelect:hover {
-    border-color: #999;
-}
-
+.microflowSelect:hover { border-color: #999; }
 .microflowSelect:focus {
-    border-color: #0066cc;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
 }
 
+.darkMode .microflowSelect {
+    background-color: var(--bg-white);
+    border-color: #444;
+    color: var(--text-dark);
+}
+
+.darkMode .microflowSelect:hover { border-color: #666; }
+.darkMode .microflowSelect:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
+}
+
+.darkMode .microflowSelect option {
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+}
+
+/* Loader */
 .loaderContainer {
     display: flex;
     gap: 10px;
@@ -203,42 +275,33 @@
     flex: 1;
     padding: 10px 12px;
     font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .loaderInput:focus {
-    border-color: #0066cc;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
 }
 
-.loaderInput::placeholder {
-    color: #999;
+.loaderInput::placeholder { color: #999; }
+
+.darkMode .loaderInput {
+    background-color: var(--bg-white);
+    border-color: #444;
+    color: var(--text-dark);
 }
 
-.loaderButton {
-    background-color: #0066cc;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
-    white-space: nowrap;
+.darkMode .loaderInput:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
 }
 
-.loaderButton:hover {
-    background-color: #0052a3;
-}
+.darkMode .loaderInput::placeholder { color: #666; }
 
-.loaderButton:active {
-    background-color: #003d7a;
-}
-
+/* Pagination */
 .pagination {
     display: flex;
     gap: 8px;
@@ -248,15 +311,14 @@
 }
 
 .pageButton {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
     padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font: 500 14px;
+    transition: background-color var(--transition), border-color var(--transition);
 }
 
 .pageButton:hover:not(:disabled) {
@@ -270,11 +332,31 @@
 }
 
 .pageButtonActive {
-    background-color: #0066cc;
+    background-color: var(--primary-color);
     color: white;
-    border-color: #0066cc;
+    border-color: var(--primary-color);
 }
 
+.darkMode .pageButton {
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    border-color: #444;
+}
+
+.darkMode .pageButton:hover:not(:disabled) {
+    background-color: #3a3a3a;
+    border-color: #666;
+}
+
+.darkMode .pageButton:disabled { opacity: 0.5; }
+
+.darkMode .pageButtonActive {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Field Badges */
 .fieldsBadgeContainer {
     display: flex;
     flex-wrap: wrap;
@@ -286,7 +368,7 @@
     align-items: center;
     gap: 4px;
     background-color: #e8f4f8;
-    border: 1px solid #0066cc;
+    border: 1px solid var(--primary-color);
     border-radius: 12px;
     padding: 4px 8px;
     font-size: 12px;
@@ -295,187 +377,25 @@
 
 .fieldName {
     font-weight: 600;
-    color: #0066cc;
+    color: var(--primary-color);
 }
 
 .fieldType {
-    color: #666;
+    color: var(--text-light);
     font-size: 11px;
     background-color: rgba(0, 102, 204, 0.1);
     padding: 2px 4px;
-    border-radius: 4px;
-}
-
-/* Dark Mode Styles */
-.darkMode {
-    background-color: #1e1e1e;
-}
-
-.darkMode h1 {
-    color: #4da6ff;
-}
-
-.darkMode .title {
-    color: #4da6ff;
-}
-
-.darkMode .description {
-    color: #b0b0b0;
-}
-
-.darkMode .pipelineTable {
-    border-color: #333;
-}
-
-.darkMode .tableHeader {
-    background-color: #2a2a2a;
-    border-bottom-color: #444;
-}
-
-.darkMode .tableHeaderCell {
-    border-right-color: #333;
-    color: #e0e0e0;
-}
-
-.darkMode .tableRow {
-    border-bottom-color: #333;
-}
-
-.darkMode .tableRow:hover {
-    background-color: #2a2a2a;
-}
-
-.darkMode .tableRow.selected {
-    background-color: #1a3a52;
-}
-
-.darkMode .tableRow:hover.selected {
-    background-color: #1a3a52;
-}
-
-.darkMode .tableCell {
-    border-right-color: #333;
-    color: #e0e0e0;
-}
-
-.darkMode .microflowSection {
-    background-color: #2a2a2a;
-    border-color: #333;
-}
-
-.darkMode .microflowTitle {
-    color: #4da6ff;
-}
-
-.darkMode .microflowDescription {
-    color: #b0b0b0;
-}
-
-.darkMode .microflowSection li {
-    color: #c0c0c0;
-}
-
-.darkMode .microflowSection code {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-}
-
-.darkMode .microflowButton {
-    background-color: #0066cc;
-    color: white;
-}
-
-.darkMode .microflowButton:hover {
-    background-color: #0052a3;
-}
-
-.darkMode .microflowButton:active {
-    background-color: #003d7a;
-}
-
-.darkMode .microflowSelectLabel {
-    color: #e0e0e0;
-}
-
-.darkMode .microflowSelect {
-    background-color: #2a2a2a;
-    border-color: #444;
-    color: #e0e0e0;
-}
-
-.darkMode .microflowSelect:hover {
-    border-color: #666;
-}
-
-.darkMode .microflowSelect:focus {
-    border-color: #4da6ff;
-    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
-}
-
-.darkMode .microflowSelect option {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-}
-
-.darkMode .loaderInput {
-    background-color: #2a2a2a;
-    border-color: #444;
-    color: #e0e0e0;
-}
-
-.darkMode .loaderInput:focus {
-    border-color: #4da6ff;
-    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
-}
-
-.darkMode .loaderInput::placeholder {
-    color: #666;
-}
-
-.darkMode .loaderButton {
-    background-color: #0066cc;
-    color: white;
-}
-
-.darkMode .loaderButton:hover {
-    background-color: #0052a3;
-}
-
-.darkMode .loaderButton:active {
-    background-color: #003d7a;
-}
-
-.darkMode .pageButton {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
-    border-color: #444;
-}
-
-.darkMode .pageButton:hover:not(:disabled) {
-    background-color: #3a3a3a;
-    border-color: #666;
-}
-
-.darkMode .pageButton:disabled {
-    opacity: 0.5;
-}
-
-.darkMode .pageButtonActive {
-    background-color: #0066cc;
-    color: white;
-    border-color: #0066cc;
+    border-radius: 2px;
 }
 
 .darkMode .fieldBadge {
     background-color: #1a3a52;
-    border-color: #4da6ff;
+    border-color: var(--primary-light);
 }
 
-.darkMode .fieldName {
-    color: #4da6ff;
-}
+.darkMode .fieldName { color: var(--primary-light); }
 
 .darkMode .fieldType {
-    color: #b0b0b0;
+    color: var(--text-light);
     background-color: rgba(77, 166, 255, 0.1);
 }
