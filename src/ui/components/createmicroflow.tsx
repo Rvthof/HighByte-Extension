@@ -53,7 +53,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
         }
 
         try {
-            const microflowName = `${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
+            const microflowName = `HB_${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
             const module = await getModuleById(selectedModuleName);
 
             if (!module) {

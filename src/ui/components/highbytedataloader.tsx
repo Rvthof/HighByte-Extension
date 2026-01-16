@@ -76,7 +76,7 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiD
             }
             setApiData(await response.json());
 
-            const existingMicroflows = await studioPro.app.model.microflows.loadAll((info: Primitives.UnitInfo) => info.name ? info.name.startsWith('HighByte_'):false);
+            const existingMicroflows = await studioPro.app.model.microflows.loadAll((info: Primitives.UnitInfo) => info.name ? info.name.startsWith('HB_'):false);
 
             const filteredMicroflows = existingMicroflows.filter(mf => hasRESTCallActionMatchingUrl(mf, apibaseurl));
             
