@@ -38,18 +38,26 @@ export const component: IComponent = {
                 <div className={`${styles.container} ${isDarkMode ? styles.darkMode : ''}`}>
                     <h1 className={styles.title}>HighByte Extension</h1>
                     <p className={styles.description}>Seamlessly integrate HighByte pipelines with your Mendix application. This extension automatically discovers your available pipelines from the HighByte Swagger API and enables you to quickly generate microflows that interact with your data pipelines.</p>
-                    <div className={styles.prefixInputContainer}>
+                    <div className={styles.prefixInputWithIcon}>
                         <label htmlFor="prefix-input" className={styles.prefixInputLabel}>
                             Microflow Prefix:
                         </label>
-                        <input
-                            id="prefix-input"
-                            className={styles.prefixInput}
-                            type="text"
-                            value={microflowPrefix}
-                            onChange={(e) => setMicroflowPrefix(e.target.value)}
-                            placeholder="HB_"
-                        />
+                        <div className={styles.prefixInputWrapper}>
+                            <input
+                                id="prefix-input"
+                                className={styles.prefixInput}
+                                type="text"
+                                value={microflowPrefix}
+                                onChange={(e) => setMicroflowPrefix(e.target.value)}
+                                placeholder="HB_"
+                            />
+                            <div className={styles.infoIcon}>
+                                i
+                                <div className={styles.tooltip}>
+                                    This prefix is used to automatically name newly created microflows and identify existing microflows in your project. Only microflows starting with this prefix will be discovered.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} setMicroflowsWithRestActions={setMicroflowsWithRestActions} microflowPrefix={microflowPrefix} setMicroflowPrefix={setMicroflowPrefix} />
                     <List context={componentContext} apiData={apiData} apiLocation={apiLocation} microflowsWithRestActions={microflowsWithRestActions} microflowPrefix={microflowPrefix} />

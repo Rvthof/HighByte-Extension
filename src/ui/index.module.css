@@ -353,6 +353,120 @@
 
 .darkMode .prefixInput::placeholder { color: #666; }
 
+/* Prefix Info Icon */
+.prefixInputWithIcon {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.prefixInputContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    width: fit-content;
+}
+
+.prefixInputLabel {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.darkMode .prefixInputLabel { color: var(--text-dark); }
+
+.prefixInputWrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.infoIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: help;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.infoIcon:hover {
+    background-color: var(--primary-hover);
+}
+
+.darkMode .infoIcon {
+    background-color: var(--primary-light);
+    color: #000;
+}
+
+.darkMode .infoIcon:hover {
+    background-color: #4da6ff;
+}
+
+.prefixInput {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    width: 150px;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: normal;
+    width: 220px;
+    text-align: left;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.infoIcon:hover .tooltip {
+    opacity: 1;
+}
+
+.darkMode .tooltip {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #333;
+}
+
+.darkMode .tooltip::after {
+    border-top-color: #444;
+}
+
 /* Pagination */
 .pagination {
     display: flex;
