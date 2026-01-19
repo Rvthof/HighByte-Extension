@@ -28,7 +28,12 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
                 const modulesList = await fetchModules();
                 setModules(modulesList);
                 if (modulesList.length > 0) {
-                    setSelectedModuleName(modulesList[0]);
+                    const highByteConnector = modulesList.find((module) => module === 'HighByteConnector');
+                    if (highByteConnector) {
+                        setSelectedModuleName(highByteConnector);
+                    } else {
+                        setSelectedModuleName(modulesList[0]);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching modules:', error);
