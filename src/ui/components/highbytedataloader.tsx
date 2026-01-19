@@ -3,7 +3,7 @@ import { getStudioProApi, Primitives } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { HighByteLoaderProps } from '../types';
 
-const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiData, setApiLocation, setMicroflowsWithRestActions }) => {
+const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiData, setApiLocation, setMicroflowsWithRestActions, microflowPrefix }) => {
     const studioPro = getStudioProApi(context);
     const messageApi = studioPro.ui.messageBoxes;
     const [apiLoc, setApiLoc] = useState('http://127.0.0.1:8885/data/doc/index.html');
@@ -54,6 +54,16 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiD
     };
 
     const handleClick = async () => {
+        if (microflowPrefix.length < 2) {
+            await messageApi.show('error', 'Microflow prefix must be at least 2 characters long.');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9_]+$/.test(microflowPrefix)) {
+            await messageApi.show('error', 'Microflow prefix can only contain alphanumeric characters and underscores.');
+            return;
+        }
+
         if (!isValidUrl(apiLoc)) {
             await messageApi.show('error', `Invalid URL: "${apiLoc}". Please enter a valid URL.`);
             return;
@@ -76,7 +86,7 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiD
             }
             setApiData(await response.json());
 
-            const existingMicroflows = await studioPro.app.model.microflows.loadAll((info: Primitives.UnitInfo) => info.name ? info.name.startsWith('HB_'):false);
+            const existingMicroflows = await studioPro.app.model.microflows.loadAll((info: Primitives.UnitInfo) => info.name ? info.name.startsWith(microflowPrefix):false);
 
             const filteredMicroflows = existingMicroflows.filter(mf => hasRESTCallActionMatchingUrl(mf, apibaseurl));
             
@@ -85,7 +95,7 @@ const HighByteLoader: React.FC<HighByteLoaderProps> = ({ context, label, setApiD
                 const restCallActions = extractRESTCallActionsMatchingUrl(microflow, apibaseurl);
                 const pipelineName = restCallActions.length > 0 ? extractPipelineName(restCallActions[0]) : 'Unknown';
 
-                const mf = microflow as any; // It thinks there is no $ModuleName property, so we cast to any
+                const mf = microflow as any; // It thinks there is no $ModuleName property, so we cast to 'any'
                 
                 return {
                     microflowID: microflow.$ID,

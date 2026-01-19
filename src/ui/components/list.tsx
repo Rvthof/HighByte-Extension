@@ -5,7 +5,7 @@ import { ListProps, ListItem, isPipelinesResponse } from '../types';
 import { transformPipelineData, calculatePaginationValues } from '../services/pipelineTransformer';
 import { getStudioPro } from '../services/studioProService';
 
-export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation, microflowsWithRestActions }) => {
+export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation, microflowsWithRestActions, microflowPrefix }) => {
     const studioPro = getStudioPro();
     const [activeTab, setActiveTab] = useState<'available' | 'existing'>('available');
     const [items, setItems] = useState<ListItem[]>([]);
@@ -151,7 +151,7 @@ export const MyList: React.FC<ListProps> = ({ context, apiData, apiLocation, mic
                         <h2>Available pipelines with API triggers.</h2>
                         {renderTableList(paginatedItems, handlePipelineClick, selectedId)}
                         {renderPaginationControls(currentPage, pagination, setCurrentPage, items.length)}
-                        <CreateMicroflow context={context} pipeline={selectedPipeline} apiLocation={apiLocation} />
+                        <CreateMicroflow context={context} pipeline={selectedPipeline} apiLocation={apiLocation} microflowPrefix={microflowPrefix} />
                     </div>
                 )}
 

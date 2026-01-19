@@ -12,7 +12,7 @@ import {
     setupExclusiveSplit,
 } from '../services/microflowService';
 
-const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation }) => {
+const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation, microflowPrefix }) => {
     const [modules, setModules] = useState<string[]>([]);
     const [selectedModuleName, setSelectedModuleName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +42,16 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
     }, [messageApi]);
 
     const handleCreateMicroflow = async () => {
+        if (microflowPrefix.length < 2) {
+            await messageApi.show('error', 'Microflow prefix must be at least 2 characters long.');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9_]+$/.test(microflowPrefix)) {
+            await messageApi.show('error', 'Microflow prefix can only contain alphanumeric characters and underscores.');
+            return;
+        }
+
         if (!pipeline) {
             await messageApi.show('warning', 'No pipeline selected');
             return;
@@ -53,7 +63,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
         }
 
         try {
-            const microflowName = `HB_${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
+            const microflowName = `${microflowPrefix}${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
             const module = await getModuleById(selectedModuleName);
 
             if (!module) {

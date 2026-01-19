@@ -306,6 +306,53 @@
 
 .darkMode .loaderInput::placeholder { color: #666; }
 
+/* Prefix Input */
+.prefixInputContainer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.prefixInputLabel {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 14px;
+}
+
+.darkMode .prefixInputLabel { color: var(--text-dark); }
+
+.prefixInput {
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    width: 150px;
+}
+
+.prefixInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.prefixInput::placeholder { color: #999; }
+
+.darkMode .prefixInput {
+    background-color: var(--bg-white);
+    border-color: #444;
+    color: var(--text-dark);
+}
+
+.darkMode .prefixInput:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.1);
+}
+
+.darkMode .prefixInput::placeholder { color: #666; }
+
 /* Pagination */
 .pagination {
     display: flex;

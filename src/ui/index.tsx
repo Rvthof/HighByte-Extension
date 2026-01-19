@@ -19,6 +19,7 @@ export const component: IComponent = {
         const AppContent = () => {
             const [apiData, setApiData] = useState<unknown>(null);
             const [apiLocation, setApiLocation] = useState("");
+            const [microflowPrefix, setMicroflowPrefix] = useState("HB_");
             const [microflowsWithRestActions, setMicroflowsWithRestActions] = useState<Array<{ microflowID: string; id: string; name: string; moduleName: string; pipelineName: string }>>([]);
 
             // Inject CSS into head
@@ -37,8 +38,21 @@ export const component: IComponent = {
                 <div className={`${styles.container} ${isDarkMode ? styles.darkMode : ''}`}>
                     <h1 className={styles.title}>HighByte Extension</h1>
                     <p className={styles.description}>Seamlessly integrate HighByte pipelines with your Mendix application. This extension automatically discovers your available pipelines from the HighByte Swagger API and enables you to quickly generate microflows that interact with your data pipelines.</p>
-                    <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} setMicroflowsWithRestActions={setMicroflowsWithRestActions} />
-                    <List context={componentContext} apiData={apiData} apiLocation={apiLocation} microflowsWithRestActions={microflowsWithRestActions} />
+                    <div className={styles.prefixInputContainer}>
+                        <label htmlFor="prefix-input" className={styles.prefixInputLabel}>
+                            Microflow Prefix:
+                        </label>
+                        <input
+                            id="prefix-input"
+                            className={styles.prefixInput}
+                            type="text"
+                            value={microflowPrefix}
+                            onChange={(e) => setMicroflowPrefix(e.target.value)}
+                            placeholder="HB_"
+                        />
+                    </div>
+                    <HighByteLoader context={componentContext} label="Retrieve pipelines" setApiData={setApiData} setApiLocation={setApiLocation} setMicroflowsWithRestActions={setMicroflowsWithRestActions} microflowPrefix={microflowPrefix} setMicroflowPrefix={setMicroflowPrefix} />
+                    <List context={componentContext} apiData={apiData} apiLocation={apiLocation} microflowsWithRestActions={microflowsWithRestActions} microflowPrefix={microflowPrefix} />
                 </div>
             );
         };
