@@ -26,7 +26,7 @@ export const component: IComponent = {
             useEffect(() => {
                 const link = document.createElement("link");
                 link.rel = "stylesheet";
-                link.href = "./tab.css";
+                link.href = "./list.css";
                 document.head.appendChild(link);
 
                 return () => {

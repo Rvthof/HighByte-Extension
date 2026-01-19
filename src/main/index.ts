@@ -17,7 +17,7 @@ export const component: IComponent = {
                     },
                     {
                         componentName: "extension/HighByte-Extension",
-                        uiEntrypoint: "tab"
+                        uiEntrypoint: "list"
                     }
                 )
             }

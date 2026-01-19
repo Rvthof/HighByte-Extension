@@ -15,7 +15,7 @@ const entryPoints = [
 
 entryPoints.push({
     in: 'src/ui/index.tsx',
-    out: 'tab'
+    out: 'list'
 })
 
 const args = parseArgs(process.argv.slice(2))
