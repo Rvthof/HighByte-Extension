@@ -121,13 +121,11 @@ export const setupRestCallAction = async (requestTemplateText: string, argList: 
     const stringTemplate = (await microflows.createElement('Microflows$StringTemplate')) as Microflows.StringTemplate;
     const templateArg = (await microflows.createElement('Microflows$TemplateArgument')) as Microflows.TemplateArgument;
     const actionActivity = (await microflows.createElement('Microflows$ActionActivity')) as Microflows.ActionActivity;
-    const httpHeader = (await microflows.createElement('Microflows$HttpHeaderEntry')) as Microflows.HttpHeaderEntry;
 
     stringTemplate.text = '{1}';
     templateArg.expression = expression;
     stringTemplate.arguments = [templateArg];
     httpConfiguration.customLocationTemplate = stringTemplate;
-    httpConfiguration.headerEntries.push(httpHeader);
     actionActivity.action = restCall;
 
     restCall.httpConfiguration = httpConfiguration;

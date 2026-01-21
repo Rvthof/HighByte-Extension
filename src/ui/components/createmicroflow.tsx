@@ -98,8 +98,10 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             // Setup REST call action
             const { restCall, actionActivity } = await setupRestCallAction(requestTemplateText, argList, `'${apiLocation}v1/${pipeline.name}/value'`);
             
-            restCall.httpConfiguration.headerEntries[0].key = "Authorization";
-            restCall.httpConfiguration.headerEntries[0].value = "'Bearer ' + @HighByteConnector.HB_APIKey";
+            const httpHeader = (await microflows.createElement('Microflows$HttpHeaderEntry')) as Microflows.HttpHeaderEntry;
+            httpHeader.key = "Authorization";
+            httpHeader.value = "'Bearer ' + @HighByteConnector.HB_APIKey";
+            restCall.httpConfiguration.headerEntries.push(httpHeader);
 
             actionActivity.size = { width: 120, height: 60 };
             actionActivity.relativeMiddlePoint = { x: 400, y: 200 };
