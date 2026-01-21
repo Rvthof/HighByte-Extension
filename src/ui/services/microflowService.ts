@@ -123,9 +123,6 @@ export const setupRestCallAction = async (requestTemplateText: string, argList: 
     const actionActivity = (await microflows.createElement('Microflows$ActionActivity')) as Microflows.ActionActivity;
     const httpHeader = (await microflows.createElement('Microflows$HttpHeaderEntry')) as Microflows.HttpHeaderEntry;
 
-    httpHeader.key = "Authorization";
-    httpHeader.value = "'Bearer ' + @HighByteConnector.HB_APIKey";
-
     stringTemplate.text = '{1}';
     templateArg.expression = expression;
     stringTemplate.arguments = [templateArg];
