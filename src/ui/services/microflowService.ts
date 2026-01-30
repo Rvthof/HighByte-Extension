@@ -62,7 +62,7 @@ export const createMessageActivity = async (errorType: Microflows.ShowMessageTyp
     return errorActivity;
 };
 
-export const setupMicroflowParameters = async (objectCollection: any, requiredFields: Array<{ name: string; type: string }>,): Promise<Microflows.TemplateArgument[]> => {
+export const setupMicroflowParameters = async (objectCollection: Microflows.MicroflowObjectCollection, requiredFields: Array<{ name: string; type: string }>,): Promise<Microflows.TemplateArgument[]> => {
     const microflows = getMicroflows();
     const argList: Microflows.TemplateArgument[] = [];
     for (let i = 0; i < requiredFields.length; i++) {
@@ -81,8 +81,10 @@ export const setupMicroflowParameters = async (objectCollection: any, requiredFi
                     | 'Void',
             });
             const paramObj = objectCollection.getMicroflowParameterObject(field.name);
-            paramObj.size = { width: 30, height: 30 };
-            paramObj.relativeMiddlePoint = { x: 100 + i * 100, y: 0 };
+            if (paramObj) {
+                paramObj.size = { width: 30, height: 30 };
+                paramObj.relativeMiddlePoint = { x: 100 + i * 100, y: 0 };
+            }
 
             const requestArg = (await microflows.createElement('Microflows$TemplateArgument')) as Microflows.TemplateArgument;
             requestArg.expression = matchTemplateArgType(field.type, field.name);
