@@ -217,6 +217,14 @@
 
 .loaderButton { white-space: nowrap; }
 
+.moduleInfo {
+    font-size: 13px;
+    color: var(--text-muted, #666);
+    margin: 0.75rem 0;
+}
+
+.darkMode .moduleInfo { color: var(--text-muted); }
+
 /* Module Select */
 .microflowSelectContainer {
     margin: 1rem 0;

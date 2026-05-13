@@ -33,7 +33,7 @@ export const copyToAppPlugin = (appDir, outDir, extensionDirectoryName) => ({
                 const appExtensionDirPath = await ensureExtensionDirectoryExists(appDir, extensionDirectoryName);
 
                 if (appExtensionDirPath) {
-                    copyExtensionAssetsToApplication(appExtensionDirPath, outDir);
+                    await copyExtensionAssetsToApplication(appExtensionDirPath, outDir);
                 } else {
                     console.error("Could not find Mendix application directory:", appDir);
                     console.info("Skipping copying the extension to application directory");

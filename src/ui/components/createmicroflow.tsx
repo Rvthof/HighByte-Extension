@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Microflows } from '@mendix/extensions-api';
 import styles from '../index.module.css';
 import { CreateMicroflowProps } from '../types';
-import { getStudioPro } from '../services/studioProService';
-import { fetchModules, getModuleById } from '../services/moduleService';
+import { getStudioPro, getRequiredProjectModule, IMPLEMENTATION_MODULE } from '../services/studioProService';
 import {
     createSequenceFlow,
     createMessageActivity,
@@ -13,38 +12,11 @@ import {
 } from '../services/microflowService';
 
 const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, apiLocation, microflowPrefix }) => {
-    const [modules, setModules] = useState<string[]>([]);
-    const [selectedModuleName, setSelectedModuleName] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
     const studioPro = getStudioPro();
     const messageApi = studioPro.ui.messageBoxes;
     const microflows = studioPro.app.model.microflows;
-
-    useEffect(() => {
-        const loadModules = async () => {
-            setIsLoading(true);
-            try {
-                const modulesList = await fetchModules();
-                setModules(modulesList);
-                if (modulesList.length > 0) {
-                    const highByteConnector = modulesList.find((module) => module === 'HighByteConnector');
-                    if (highByteConnector) {
-                        setSelectedModuleName(highByteConnector);
-                    } else {
-                        setSelectedModuleName(modulesList[0]);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching modules:', error);
-                await messageApi.show('error', 'Failed to load modules');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadModules();
-    }, [messageApi]);
 
     const handleCreateMicroflow = async () => {
         if (microflowPrefix.length < 2) {
@@ -62,22 +34,11 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             return;
         }
 
-        if (!selectedModuleName) {
-            await messageApi.show('error', 'Please select a module to create the microflow in.');
-            return;
-        }
-
+        setIsLoading(true);
         try {
             const microflowName = `${microflowPrefix}${pipeline.name.replace(/\s+/g, '_')}_Microflow`;
-            const module = await getModuleById(selectedModuleName);
-
-            if (!module) {
-                await messageApi.show('error', 'No module found with the specified name.');
-                return;
-            }
-
+            const module = await getRequiredProjectModule();
             const containerId = module.$ID;
-            const folderName = module.name ?? module.$ID;
 
             const microflow = await microflows.addMicroflow(containerId, { name: microflowName });
             const objectCollection = microflow.objectCollection;
@@ -97,10 +58,10 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
 
             // Setup REST call action
             const { restCall, actionActivity } = await setupRestCallAction(requestTemplateText, argList, `'${apiLocation}v1/${pipeline.name}/value'`);
-            
+
             const httpHeader = (await microflows.createElement('Microflows$HttpHeaderEntry')) as Microflows.HttpHeaderEntry;
             httpHeader.key = "Authorization";
-            httpHeader.value = "'Bearer ' + @HighByteConnector.HB_APIKey";
+            httpHeader.value = `'Bearer ' + @${IMPLEMENTATION_MODULE}.HB_APIKey`;
             restCall.httpConfiguration.headerEntries.push(httpHeader);
 
             actionActivity.size = { width: 120, height: 60 };
@@ -134,7 +95,7 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
 
             microflow.flows.push(await createSequenceFlow(exclusiveSplit.$ID, successActivity.$ID, true));
 
-            const endEvent = microflow.objectCollection.objects[1]; // Retrieve the default end event that was created with the microflow
+            const endEvent = microflow.objectCollection.objects[1];
             endEvent.relativeMiddlePoint = { x: 900, y: 200 };
             microflow.flows.push(await createSequenceFlow(successActivity.$ID, endEvent.$ID));
 
@@ -159,10 +120,12 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
             // Save the microflow
             await microflows.save(microflow);
 
-            await messageApi.show('info', `Microflow "${microflowName}" created successfully in folder '${folderName}'!`);
+            await messageApi.show('info', `Microflow "${microflowName}" created successfully in module '${IMPLEMENTATION_MODULE}'!`);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             await messageApi.show('error', `Error creating microflow: ${errorMessage}`);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -182,31 +145,14 @@ const CreateMicroflow: React.FC<CreateMicroflowProps> = ({ context, pipeline, ap
                     </li>
                 ))}
             </ul>
-            <div className={styles.microflowSelectContainer}>
-                <label htmlFor="module-select" className={styles.microflowSelectLabel}>
-                    Select Module:
-                </label>
-                <select
-                    id="module-select"
-                    value={selectedModuleName}
-                    onChange={(e) => setSelectedModuleName(e.target.value)}
-                    className={styles.microflowSelect}
-                    disabled={isLoading}
-                >
-                    {modules.map((moduleName) => (
-                        <option key={moduleName} value={moduleName}>
-                            {moduleName}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <p className={styles.moduleInfo}>
+                Microflow will be created in module: <strong>{IMPLEMENTATION_MODULE}</strong>
+            </p>
             <button className={styles.microflowButton} onClick={handleCreateMicroflow} disabled={isLoading}>
-                Create Microflow
+                {isLoading ? 'Creating…' : 'Create Microflow'}
             </button>
         </div>
     );
 };
 
 export default CreateMicroflow;
-
-

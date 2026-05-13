@@ -71,14 +71,14 @@ export const setupMicroflowParameters = async (objectCollection: Microflows.Micr
             await objectCollection.addMicroflowParameterObject({
                 name: field.name,
                 type: capitalizeType(field.type) as
-                    | 'Binary'
                     | 'Boolean'
                     | 'DateTime'
                     | 'Decimal'
-                    | 'Float'
                     | 'Integer'
                     | 'String'
-                    | 'Void',
+                    | 'Enumeration'
+                    | 'List'
+                    | 'Object',
             });
             const paramObj = objectCollection.getMicroflowParameterObject(field.name);
             if (paramObj) {
